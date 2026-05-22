@@ -1,19 +1,24 @@
 #ifndef AUDIO_PLAYER_H
 #define AUDIO_PLAYER_H
 
+#include <atomic>
 #include <cstdint>
 #include <memory>
+#include <queue>
+#include <mutex>
 #include <string_view>
 
 #include <entityx/entityx.h>
-
 #include <libopenmpt/libopenmpt.hpp>
 #include <SDL.h>
+
+#include "../Event/MusicTick.h"
 
 
 class AudioPlayer final {
 private:
     friend class AssetManager;
+    friend class AudioSystem;
 
     static constexpr int32_t DEFAULT_FREQUENCY = 48000;
     static constexpr uint16_t DEFAULT_BUFFER_SIZE = 1024;
@@ -21,9 +26,11 @@ private:
     entityx::EventManager& m_events;
     SDL_AudioSpec m_audio_spec;
     SDL_AudioDeviceID m_audio_device;
-    int32_t m_music_pattern;
-    int32_t m_music_order;
-    int32_t m_music_row;
+    std::atomic<int32_t> m_music_pattern;
+    std::atomic<int32_t> m_music_order;
+    std::atomic<int32_t> m_music_row;
+    std::queue<MusicTick> m_event_queue;
+    std::mutex m_event_mutex;
     std::unique_ptr<openmpt::module> m_module;
 
 private:

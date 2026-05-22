@@ -12,6 +12,8 @@ private:
     bool m_succeed;
 
 public:
+    BehaviorSystem(const BehaviorSystem &) = delete;
+    BehaviorSystem &operator=(const BehaviorSystem &) = delete;
     explicit BehaviorSystem(std::unique_ptr<Node> behavior);
 
 public:

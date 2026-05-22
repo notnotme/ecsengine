@@ -12,17 +12,17 @@
 void MovementSystem::update(entityx::EntityManager &entities, entityx::EventManager &events, const entityx::TimeDelta dt) {
     entities.entities_with_components<Velocity, Friction>().each([&](entityx::Entity entity, Velocity &velocity, Friction &friction) {
         velocity.x *= std::pow(friction.x, dt);
-        if (std::abs(velocity.x) < 0.001f) {
+        if (std::abs(velocity.x) < EPSILON) {
             velocity.x = 0.0f;
         }
 
         velocity.y *= std::pow(friction.y, dt);
-        if (std::abs(velocity.y) < 0.001f) {
+        if (std::abs(velocity.y) < EPSILON) {
             velocity.y = 0.0f;
         }
 
         velocity.r *= std::pow(friction.r, dt);
-        if (std::abs(velocity.r) < 0.001f) {
+        if (std::abs(velocity.r) < EPSILON) {
             velocity.r = 0.0f;
         }
     });

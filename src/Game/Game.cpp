@@ -106,9 +106,9 @@ bool Game::update(const GamePad &gamePad, const entityx::TimeDelta dt) {
         scene_texture = m_scene->getTexture();
     }
 
-    const auto ratio_width = std::ceil(std::max(1, m_window_width / m_game_width));
-    const auto ratio_height = std::ceil(std::max(1, m_window_height / m_game_height));
-    const auto ratio = static_cast<int32_t>(ratio_width > ratio_height ? ratio_height : ratio_width);
+    const auto ratio_width = std::max(1, m_window_width / m_game_width);
+    const auto ratio_height = std::max(1, m_window_height / m_game_height);
+    const auto ratio = std::min(ratio_width, ratio_height);
     const auto& quad_program = m_assets.getQuadProgram();
     constexpr auto clear_color = std::array{ 0.0f, 0.0f, 0.0f, 1.0f };
 

@@ -63,6 +63,7 @@
 #include "ecsengine/Renderer/SpriteProgram.h"
 #include "ecsengine/Renderer/SpriteVertex.h"
 
+#include "ecsengine/System/AudioSystem.h"
 #include "ecsengine/System/BehaviorSystem.h"
 #include "ecsengine/System/MovementSystem.h"
 #include "ecsengine/System/SpriteSystem.h"

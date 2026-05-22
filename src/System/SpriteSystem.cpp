@@ -22,7 +22,9 @@ SpriteSystem::SpriteSystem(const SpriteProgram &spriteProgram, const GLuint vert
       m_sort_enabled(enableSort),
       m_surface_width(surfaceWidth),
       m_surface_height(surfaceHeight),
-      m_orthogonal() {}
+      m_orthogonal() {
+    m_cache.reserve(bufferSize);
+}
 
 void SpriteSystem::configure(entityx::EntityManager &entities, entityx::EventManager &events) {
     // Initialize the orthogonal matrix
@@ -45,16 +47,19 @@ void SpriteSystem::configure(entityx::EntityManager &entities, entityx::EventMan
 void SpriteSystem::update(entityx::EntityManager &entities, entityx::EventManager &events, const entityx::TimeDelta dt) {
     // Get a view of all entities we want to render
     const auto view = entities.entities_with_components<Position, Size, TextureUnit>();
+    const auto sprite_count = static_cast<GLsizei>(std::distance(view.begin(), view.end()));
 
-    // Copy all entities into a Vector to be able to sort them by z_index and vectorize the copy to buffer loop
-    auto sprite_list = std::vector<entityx::Entity>(view.begin(), view.end());
-    if (sprite_list.size() > m_capacity) {
+    if (m_cache.size() > m_capacity) {
         throw std::runtime_error("SpriteSystem buffer size is too small");
     }
 
+    // Copy all entities into the cached Vector to be able to sort them by z_index and vectorize the copy to buffer loop
+    m_cache.resize(sprite_count);
+    std::copy(view.begin(), view.end(), m_cache.begin());
+
     if (m_sort_enabled) {
         // Eventually sort if needed
-        std::sort(std::execution::par_unseq, sprite_list.begin(), sprite_list.end(),
+        std::sort(std::execution::par_unseq, m_cache.begin(), m_cache.end(),
                   [](entityx::Entity a, entityx::Entity b) {
                       const auto &a_position_z = a.component<Position>()->z_index;
                       const auto &b_position_z = b.component<Position>()->z_index;
@@ -63,7 +68,6 @@ void SpriteSystem::update(entityx::EntityManager &entities, entityx::EventManage
     }
 
     // Calculate mapping size and map the buffer to local memory
-    const auto sprite_count = static_cast<GLsizei>(sprite_list.size());
     const auto total_map_size = static_cast<GLsizeiptr>(sprite_count * sizeof(SpriteVertex));
 
     glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
@@ -73,9 +77,9 @@ void SpriteSystem::update(entityx::EntityManager &entities, entityx::EventManage
 
     // Copy all the sprites using a vectorized loop
     const auto buffer_data = static_cast<SpriteVertex*>(raw_buffer_data);
-    std::for_each(std::execution::par_unseq, sprite_list.begin(), sprite_list.end(),
+    std::for_each(std::execution::par_unseq, m_cache.begin(), m_cache.end(),
                   [&](entityx::Entity &entity) {
-                      const auto index = std::distance(sprite_list.data(), &entity);
+                      const auto index = std::distance(m_cache.data(), &entity);
                       auto &vertex = buffer_data[index];
 
                       const auto &position = entity.component<Position>();

@@ -5,7 +5,12 @@
 
 
 class MovementSystem final : public entityx::System<MovementSystem> {
+private:
+    static constexpr float EPSILON = 0.001f;
+
 public:
+    MovementSystem(const MovementSystem &) = delete;
+    MovementSystem &operator=(const MovementSystem &) = delete;
     explicit MovementSystem() = default;
 
 public:

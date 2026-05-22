@@ -2,8 +2,6 @@
 
 #include <fstream>
 
-#include <ecsengine/Event/MusicTick.h>
-
 
 AudioPlayer::AudioPlayer(entityx::EventManager& gameEvents)
     : m_events(gameEvents),
@@ -38,9 +36,9 @@ void AudioPlayer::destroy() {
 
     m_audio_spec = SDL_AudioSpec();
     m_audio_device = 0;
-    m_music_pattern = 0;
-    m_music_order = 0;
-    m_music_row = 0;
+    m_music_pattern.store(0, std::memory_order_relaxed);
+    m_music_order.store(0, std::memory_order_relaxed);
+    m_music_row.store(0, std::memory_order_relaxed);
     m_module = nullptr;
 }
 
@@ -85,46 +83,43 @@ void AudioPlayer::pauseMusic() const {
 void AudioPlayer::stopMusic() {
     SDL_PauseAudioDevice(m_audio_device, true);
     SDL_ClearQueuedAudio(m_audio_device);
-    m_music_pattern = 0;
-    m_music_order = 0;
-    m_music_row = 0;
+    m_music_pattern.store(0, std::memory_order_relaxed);
+    m_music_order.store(0, std::memory_order_relaxed);
+    m_music_row.store(0, std::memory_order_relaxed);
 }
 
 int32_t AudioPlayer::getPattern() const {
-    return m_music_pattern;
+    return m_music_pattern.load(std::memory_order_relaxed);
 }
 
 int32_t AudioPlayer::getOrder() const {
-    return m_music_order;
+    return m_music_order.load(std::memory_order_relaxed);
 }
 
 int32_t AudioPlayer::getRow() const {
-    return m_music_row;
+    return m_music_row.load(std::memory_order_relaxed);
 }
 
 void AudioPlayer::tick(const int32_t pattern, const int32_t order, const int32_t row) {
     auto emit_event = false;
-    if (pattern != m_music_pattern) {
-        m_music_pattern = pattern;
+    if (pattern != m_music_pattern.load(std::memory_order_relaxed)) {
+        m_music_pattern.store(pattern, std::memory_order_relaxed);
         emit_event = true;
     }
 
-    if (order != m_music_order) {
-        m_music_order = order;
+    if (order != m_music_order.load(std::memory_order_relaxed)) {
+        m_music_order.store(order, std::memory_order_relaxed);
         emit_event = true;
     }
 
-    if (row != m_music_row) {
-        m_music_row = row;
+    if (row != m_music_row.load(std::memory_order_relaxed)) {
+        m_music_row.store(row, std::memory_order_relaxed);
         emit_event = true;
     }
 
     if (emit_event) {
-        m_events.emit<MusicTick>(
-            m_music_pattern,
-            m_music_order,
-            m_music_row
-        );
+        std::lock_guard lock(m_event_mutex);
+        m_event_queue.emplace(pattern, order, row);
     }
 }
 

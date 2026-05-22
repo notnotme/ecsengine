@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cstdint>
+#include <vector>
 
 #include <entityx/System.h>
 
@@ -19,8 +20,11 @@ private:
     const int32_t m_surface_height;
 
     std::array<float, 16> m_orthogonal;
+    std::vector<entityx::Entity> m_cache;
 
 public:
+    SpriteSystem(const SpriteSystem &) = delete;
+    SpriteSystem &operator=(const SpriteSystem &) = delete;
     explicit SpriteSystem(const SpriteProgram &spriteProgram, GLuint vertexBuffer, uint32_t bufferSize, bool enableSort, int32_t surfaceWidth, int32_t surfaceHeight);
 
 public:

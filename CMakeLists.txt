@@ -43,6 +43,7 @@ add_library(ecsengine STATIC
     src/Renderer/RendererUtil.cpp
     src/Renderer/Shader.cpp
     src/Renderer/SpriteProgram.cpp
+    src/System/AudioSystem.cpp
     src/System/BehaviorSystem.cpp
     src/System/MovementSystem.cpp
     src/System/SpriteSystem.cpp
