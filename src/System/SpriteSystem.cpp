@@ -102,15 +102,15 @@ void SpriteSystem::update(entityx::EntityManager &entities, entityx::EventManage
 
                       if (texture_slot->unit != TextureUnit::NONE) {
                           if (const auto &texture_coord = entity.component<TextureCoordinate>()) {
-                              vertex.texture_s = static_cast<int16_t>(std::ceil(texture_coord->s * INT16_MAX));
-                              vertex.texture_t = static_cast<int16_t>(std::ceil(texture_coord->t * INT16_MAX));
-                              vertex.texture_p = static_cast<int16_t>(std::floor(texture_coord->p * INT16_MAX));
-                              vertex.texture_q = static_cast<int16_t>(std::floor(texture_coord->q * INT16_MAX));
+                              vertex.texture_s = static_cast<int16_t>(std::round(texture_coord->s * UV_SCALE));
+                              vertex.texture_t = static_cast<int16_t>(std::round(texture_coord->t * UV_SCALE));
+                              vertex.texture_p = static_cast<int16_t>(std::round(texture_coord->p * UV_SCALE));
+                              vertex.texture_q = static_cast<int16_t>(std::round(texture_coord->q * UV_SCALE));
                           } else {
                               vertex.texture_s = 0;
                               vertex.texture_t = 0;
-                              vertex.texture_p = INT16_MAX;
-                              vertex.texture_q = INT16_MAX;
+                              vertex.texture_p = UV_SCALE;
+                              vertex.texture_q = UV_SCALE;
                           }
                       }
 

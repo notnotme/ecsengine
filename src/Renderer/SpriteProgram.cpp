@@ -52,7 +52,10 @@ static constexpr auto VERTEX_SRC = R"text(
         vec3 transformed = translate_mat * rotate_mat * vec3(plut[gl_VertexID] * a_size, 1.0);
         gl_Position = u_matrix * vec4(transformed, 1.0);
 
-        v_texture = vec2(a_texture[tlut[gl_VertexID].x], a_texture[tlut[gl_VertexID].y]);
+        // This value equals SpriteSystem::UV_SCALE
+        const float UV_SCALE = 256.0f;
+
+        v_texture = vec2(a_texture[tlut[gl_VertexID].x], a_texture[tlut[gl_VertexID].y]) / UV_SCALE;
         v_tint = a_tint;
         v_slot = int(a_slot);
     }
@@ -133,7 +136,7 @@ void SpriteProgram::create() {
     glVertexBindingDivisor(0, 1);
 
     glEnableVertexAttribArray(1);
-    glVertexAttribFormat(1, 4, GL_SHORT, GL_TRUE, offsetof(SpriteVertex, texture_s));
+    glVertexAttribFormat(1, 4, GL_SHORT, GL_FALSE, offsetof(SpriteVertex, texture_s));
     glVertexAttribBinding(1, 0);
     glVertexBindingDivisor(1, 1);
 

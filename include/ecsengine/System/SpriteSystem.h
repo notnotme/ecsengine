@@ -12,6 +12,9 @@
 
 class SpriteSystem final : public entityx::System<SpriteSystem> {
 private:
+    // This must match with the UV_SCALE value lying in SpriteProgram vertex shader code.
+    static constexpr float UV_SCALE = 256.0f;
+
     const SpriteProgram& m_program;
     const GLuint m_vertex_buffer;
     const uint32_t m_capacity;

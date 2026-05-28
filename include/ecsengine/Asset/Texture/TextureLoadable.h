@@ -8,8 +8,11 @@
 
 
 class TextureLoadable final : public LoadableAsset<TextureAsset> {
+private:
+    const GLint m_repeat;
+
 public:
-    TextureLoadable() = default;
+    explicit TextureLoadable(GLint repeat = GL_CLAMP_TO_EDGE);
 
 public:
     void load(std::string_view path) override;

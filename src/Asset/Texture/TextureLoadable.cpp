@@ -9,6 +9,9 @@
 #include <ecsengine/Renderer/RendererUtil.h>
 
 
+TextureLoadable::TextureLoadable(const GLint repeat)
+    : m_repeat(repeat) {}
+
 void TextureLoadable::load(const std::string_view path) {
     const auto image = IMG_Load(path.data());
     if (!image) {
@@ -30,7 +33,7 @@ void TextureLoadable::load(const std::string_view path) {
             throw std::runtime_error("Unsupported image format: " + std::format("0x{:x}", image->format->format));
     }
 
-    m_texture = createUint8Texture(image->w, image->h, image->format->BytesPerPixel);
+    m_texture = createUint8Texture(image->w, image->h, image->format->BytesPerPixel, m_repeat);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image->w, image->h, format, GL_UNSIGNED_BYTE, image->pixels);
 
     SDL_FreeSurface(image);
