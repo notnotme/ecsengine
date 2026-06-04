@@ -19,7 +19,7 @@ struct SpriteVertex {
     uint8_t tint_b;
     uint8_t tint_a;
     uint8_t slot;
-    uint8_t pad[3]; // wasted ?
+    uint8_t pad[3];
 };
 
 
