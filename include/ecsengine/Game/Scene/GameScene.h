@@ -11,6 +11,7 @@
 class GameScene : public Scene {
 public:
     explicit GameScene() = default;
+    ~GameScene() override = default;
 
 public:
     virtual void enter(entityx::EventManager& gameEvents, AssetManager &assets, int32_t sceneWidth, int32_t sceneHeight) = 0;

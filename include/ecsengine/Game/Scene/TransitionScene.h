@@ -16,6 +16,7 @@ protected:
 
 public:
     explicit TransitionScene();
+    ~TransitionScene() override = default;
 
 public:
     virtual void enter(entityx::EventManager& gameEvents, AssetManager &assets, int32_t sceneWidth, int32_t sceneHeight, GLuint outTexture, GLuint inTexture);

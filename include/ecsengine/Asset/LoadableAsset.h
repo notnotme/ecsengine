@@ -14,6 +14,8 @@ public:
     template <typename... Args>
     explicit LoadableAsset(Args&&... args);
 
+    ~LoadableAsset() override = default;
+
 public:
     virtual void load(std::string_view path) = 0;
     virtual void unload() = 0;
