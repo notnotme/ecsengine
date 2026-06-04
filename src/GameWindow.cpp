@@ -125,7 +125,7 @@ void GameWindow::show() {
         m_gamepad.button_a = SDL_GameControllerGetButton(game_controller, SDL_CONTROLLER_BUTTON_A) != 0;
         m_gamepad.button_b = SDL_GameControllerGetButton(game_controller, SDL_CONTROLLER_BUTTON_B) != 0;
 #else
-        const auto keys = const_cast<Uint8*>(SDL_GetKeyboardState(nullptr));
+        const auto keys = SDL_GetKeyboardState(nullptr);
         m_gamepad.direction_down = keys[SDL_SCANCODE_DOWN] ? 1.0f : 0.0f;
         m_gamepad.direction_up = keys[SDL_SCANCODE_UP] ? 1.0f : 0.0f;
         m_gamepad.direction_left = keys[SDL_SCANCODE_LEFT] ? 1.0f : 0.0f;
